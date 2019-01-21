@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node index.js",
+    "lint": "eslint lib/**/*.js",
+    "build": "node-gyp build"
+  },
+  "engines": {
+    "node": ">=8.0.0"
   },
   "keywords": [],
   "author": "",
@@ -12,5 +17,12 @@
   "dependencies": {
     "bindings": "^1.3.1",
     "node-addon-api": "^1.6.2"
+  },
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.12.4"
   }
 }
