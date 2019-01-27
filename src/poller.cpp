@@ -4,24 +4,33 @@
 
 Napi::FunctionReference Poller::constructor;
 
-Poller::Poller(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Poller>(info) {
+Poller::Poller(const Napi::CallbackInfo &info ) : Napi::ObjectWrap<Poller>(info) {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
+
+    std::cout << "================================" << std::endl;
+    fileDscrpt = info[0].As<Napi::Number>().Uint32Value();
+}
+/*
+void Poller::execute() {
+    std::cout << "execute" << std::endl;
 }
 
-Napi::Object Poller::Init(Napi::Env env, Napi::Object exports) {
- // This method is used to hook the accessor and method callbacks
- Napi::Function func = DefineClass(env, "Poller", {
-         InstanceMethod("getFD", &Poller::getFD)
- });
+void Poller::OnOk() {
+    std::cout << "OnOk" << std::endl;
+}
 
- // Create a peristent reference to the class constructor. This will allow
- // a function called on a class prototype and a function
- // called on instance of a class to be distinguished from each other.
+void Poller::OnError(const Napi::Error& e) {
+    std::cout << "OnError " << e << std::endl;
+}*/
+
+Napi::Object Poller::Init(Napi::Env env, Napi::Object exports) {
+ Napi::Function func = DefineClass(env, "Poller", {
+         InstanceMethod("getFD", &Poller::getFD),
+         InstanceMethod("poll", &Poller::poll),
+         InstanceMethod("onData", &Poller::onData)
+ });
  constructor = Napi::Persistent(func);
- // Call the SuppressDestruct() method on the static data prevent the calling
- // to this destructor to reset the reference when the environment is no longer
- // available.
  constructor.SuppressDestruct();
  exports.Set("Poller", func);
  return exports;
@@ -30,6 +39,18 @@ Napi::Object Poller::Init(Napi::Env env, Napi::Object exports) {
 Napi::Value Poller::getFD(const Napi::CallbackInfo &info){
  int num = this->fileDscrpt;
  return Napi::Number::New(info.Env(), num);
+}
+
+void Poller::poll(const Napi::CallbackInfo &info){
+    std::cout << "native poll, queue some work" << std::endl;
+    onData(info);
+}
+
+void Poller::onData(const Napi::CallbackInfo &info){
+    std::cout << "native poll, onData" << std::endl;
+    Napi::Env env = info.Env();
+    Napi::Function cb = info[0].As<Napi::Function>();
+    cb.Call(env.Global(), { Napi::String::New(env, "hello world") });
 }
 
 Napi::Object Init (Napi::Env env, Napi::Object exports) {
