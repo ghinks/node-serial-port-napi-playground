@@ -1,0 +1,12 @@
+sequenceDiagram
+note right of DarwinBindingJS: happy path
+note right of SerialPort: serial port opens port
+    Program ->> SerialPort: new
+    SerialPort ->> SerialPort: new Binding (Darwin)
+    DarwinBindingJS ->> AbstractBinding: Open
+    DarwinBindingJS ->> DarwinBindingJS: Open
+    DarwinBindingJS ->> PollerJS: new Poller
+    Requestor ->> DarwinBindingJS: write
+    DarwinBindingJS ->> AbstractBinding: Write
+    DarwinBindingJS ->> unixWrite: write
+    unixWrite ->> fs:write

@@ -1,0 +1,14 @@
+sequenceDiagram
+note right of DarwinBindingJS: unhappy path
+    DarwinBindingJS ->> AbstractBinding: Open
+    DarwinBindingJS ->> DarwinBindingJS: Open
+    DarwinBindingJS ->> PollerJS: new Poller
+    Requestor ->> DarwinBindingJS: write
+    DarwinBindingJS ->> AbstractBinding: Write
+       note right of unixWrite: busy push to queue
+    DarwinBindingJS -->> unixWrite: write
+    unixWrite-->>PollerJS: once(writable)
+       note right of PollerNative: enqueue wrt req
+    PollerJS->>PollerNative: poll
+    PollerNative-->>PollerNative: onData
+    PollerNative-->>PollerNative: callback handleEvent
